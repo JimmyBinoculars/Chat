@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        body {
+    font-family: consolas;
+    color: white;
+    background-color: black;
+    margin: 0;
+    padding: 0;
+}
+
+input, button {
+    border-radius: 20px;
+    background-color: black;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px;
+}
+
+button {
+    cursor: pointer;
+}
+
+input#messageInput {
+    border-radius: 0;
+    width: calc(100% - 100px);
+    margin-right: 10px;
+}
+
+#sendMessage {
+    vertical-align: middle;
+}
+
+#chatContainer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#chat {
+    flex: 1; /* Expand to fill available space */
+}
+
+#chat p {
+    margin: 5px 0;
+}
+
+/* Media Queries for Responsiveness */
+
+/* Small screens (e.g., phones) */
+@media screen and (max-width: 600px) {
+    input#messageInput {
+        width: calc(100% - 60px);
+    }
+    
+    #sendMessage {
+        font-size: 14px;
+    }
+}
+
+/* Medium screens (e.g., tablets) */
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    #chatContainer {
+        padding: 5px;
+    }
+    
+    #sendMessage {
+        font-size: 16px;
+    }
+}
+    </style>
+</head>
+<body>
+    <label for="roomInput">Enter Room ID:</label>
+    <input type="text" id="roomInput">
+    <br />
+    <button onclick="joinRoom()">Join Room</button>
+    <button onclick="createRoom()">Create Room</button>
+    <br />
+    <br />
+    <label for="usernameInput">Enter Username</label>
+    <input type="text" id="username">
+    <button onclick="setName()">Set Username</button>
+
+    <h2>Chat Room</h2>
+    <div id="chat"></div>
+    <div id="chatContainer">
+        <label for="messageInput">Your Message:</label>
+        <input type="text" id="messageInput">
+        <button onclick="sendMessage()" id="sendMessage">Send</button>
+    </div>
+
+    <script>
+        const roomInput = document.getElementById('roomInput');
+        const usernameInput = document.getElementById("username");
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('messageInput');
+        const ws = new WebSocket('ws://192.168.1.111:3000');
+        const maxMessages = 29; // Define the maximum number of messages
+
+        ws.onmessage = (event) => {
+            chat.innerHTML += `<p>${event.data}</p>`;
+            // Check if the number of messages exceeds the maximum
+            if (chat.childElementCount > maxMessages) {
+                // Remove the top message (the first child element)
+                chat.removeChild(chat.firstElementChild);
+            }
+        };
+
+        function joinRoom() {
+            const room = roomInput.value;
+            ws.send(`JOIN ${room}`);
+        }
+
+        function createRoom() {
+            const newRoom = roomInput.value;
+            ws.send(`CREATE ${newRoom}`);
+        }
+
+        function setName() {
+            const username = usernameInput.value;
+            ws.send(`USER ${username}`)
+        }
+
+        function sendMessage() {
+            const message = messageInput.value;
+            ws.send(`CHAT ${roomInput.value} ${message}`);
+            messageInput.value = "";
+        }
+        
+        addEventListener('keydown', (event) => {
+            if(event.key == 'Enter') {
+                console.log("Enter key pressed!")
+                sendMessage()
+            }
+        })
+    </script>
+</body>
+</html>
