@@ -71,6 +71,8 @@ wss.on('connection', (ws, req) => {
     clients.add([ws, "anonymous"]);
     const date = new Date();
 
+    
+
     // Extract the client's IP address from the request
     const clientIp = req.connection.remoteAddress;
     console.log(`[${date}] New Client connected from IP: ${clientIp}`);
@@ -100,6 +102,17 @@ wss.on('connection', (ws, req) => {
                     rooms.set(roomId, new Set());
                 }
                 rooms.get(roomId).add(ws);
+                clients.forEach((client) => {
+                    if (client[0] === ws) {
+                        let i = 0;
+                        while(i < 29) {
+                            if(rooms[roomId[i]] != null) {
+                                client[0].send(rooms[roomId][i]);
+                            }
+                            i++;
+                        }
+                    }
+                });
                 break;
             case "CREATE":
                 const newRoomId = content;
@@ -131,6 +144,7 @@ wss.on('connection', (ws, req) => {
                 const formattedMessage = `[${username}] ${chatMessage}`;
                 console.log(`Received message "${formattedMessage}" in room ${roomToBroadcast}`);
                 addMessage(roomToBroadcast, formattedMessage);
+                console.log(`Messages: ${rooms[roomToBroadcast]}`)
                 broadcastToRoom(roomToBroadcast, formattedMessage);
                 break;
             default:

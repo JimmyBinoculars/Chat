@@ -5,80 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat App</title>
     <style>
-        body {
-    font-family: consolas;
-    color: white;
-    background-color: black;
-    margin: 0;
-    padding: 0;
+        /* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif; /* Use a common web font */
+  color: white;
+  background-color: black;
 }
 
 input, button {
-    border-radius: 20px;
-    background-color: black;
-    border: 1px solid white;
-    color: white;
-    padding: 5px 10px;
-    margin: 5px;
+  border: none; /* Remove borders */
+  border-radius: 20px;
+  background-color: #333; /* Dark background color */
+  color: white;
+  padding: 10px 20px; /* Increase padding for better touch experience */
+  margin: 5px;
+  font-size: 16px; /* Increase font size */
+  outline: none; /* Remove outline on focus */
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Add a smooth transition effect */
 }
 
 input#messageInput {
-    border-radius: 0;
-    width: calc(100% - 100px);
-    margin-right: 10px;
+  border-radius: 0;
+  width: calc(100% - 100px);
+  margin-right: 10px;
 }
 
 #sendMessage {
-    vertical-align: middle;
+  vertical-align: middle;
+  background-color: #4caf50; /* Green color for send button */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+}
+
+#sendMessage:hover {
+  background-color: #45a049; /* Darker green on hover */
 }
 
 #chatContainer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    max-height: 300px;
-    overflow-y: auto;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Stack chat messages vertically */
+  align-items: flex-start; /* Align messages to the left */
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  max-height: 300px;
+  overflow-y: auto; /* Add a vertical scroll bar */
+  scrollbar-width: thin; /* Thin scroll bar for Firefox */
 }
 
 #chat {
-    flex: 1; /* Expand to fill available space */
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
 }
 
 #chat p {
-    margin: 5px 0;
+  margin: 5px 0;
+  padding: 5px;
+  background-color: #333; /* Dark message background */
+  border-radius: 5px;
 }
 
 /* Media Queries for Responsiveness */
 
 /* Small screens (e.g., phones) */
 @media screen and (max-width: 600px) {
-    input#messageInput {
-        width: calc(100% - 60px);
-    }
-    
-    #sendMessage {
-        font-size: 14px;
-    }
+  input#messageInput {
+    width: calc(100% - 60px);
+  }
+
+  #sendMessage {
+    font-size: 14px;
+  }
 }
 
 /* Medium screens (e.g., tablets) */
 @media screen and (min-width: 601px) and (max-width: 1024px) {
-    #chatContainer {
-        padding: 5px;
-    }
-    
-    #sendMessage {
-        font-size: 16px;
-    }
+  #chatContainer {
+    padding: 5px;
+  }
+
+  #sendMessage {
+    font-size: 16px;
+  }
 }
     </style>
 </head>
@@ -108,7 +131,7 @@ input#messageInput {
         const chat = document.getElementById('chat');
         const messageInput = document.getElementById('messageInput');
         const ws = new WebSocket('ws://192.168.1.111:3000');
-        const maxMessages = 29; // Define the maximum number of messages
+        const maxMessages = 1000; // Define the maximum number of messages
 
         ws.onmessage = (event) => {
             chat.innerHTML += `<p>${event.data}</p>`;
