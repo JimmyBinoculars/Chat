@@ -131,7 +131,7 @@ input#messageInput {
         const chat = document.getElementById('chat');
         const messageInput = document.getElementById('messageInput');
         const ws = new WebSocket('ws://192.168.1.111:3000');
-        const maxMessages = 1000; // Define the maximum number of messages
+        const maxMessages = 29; // Define the maximum number of messages
 
         ws.onmessage = (event) => {
             chat.innerHTML += `<p>${event.data}</p>`;
